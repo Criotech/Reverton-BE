@@ -5,7 +5,6 @@ const createUser = {
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().custom(password),
-    name: Joi.string().required(),
     fullName: Joi.string().required(),
     gender: Joi.string().valid('male', 'female').required(),
     title: Joi.string().required()
@@ -26,8 +25,19 @@ const login = {
   })
 };
 
+const updateUserProfile = {
+  body: Joi.object().keys({
+    fullName: Joi.string(),
+    gender: Joi.string().valid('male', 'female'),
+    title: Joi.string(),
+    dob: Joi.string(),
+    phone: Joi.string()
+  })
+};
+
 export {
   createUser,
   verifyEmail,
-  login
+  login,
+  updateUserProfile
 };

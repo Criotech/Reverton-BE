@@ -7,7 +7,12 @@ const randomString = (length: number) => Math.round(
 
 const randomDigit = () => Math.floor(1000 + Math.random() * 9000);
 
+const removeEmpty = (obj: object) => Object.entries(obj)
+  .filter(([_, v]) => (v !== null || v !== ''))
+  .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {});
+
 export {
   randomString,
-  randomDigit
+  randomDigit,
+  removeEmpty
 };

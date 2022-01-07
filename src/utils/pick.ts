@@ -1,14 +1,9 @@
-const pick = <T extends Record<string, any>> (obj: T, keys: string[]):Partial<T> => {
-  const picked: Partial<T> = {};
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const key in obj) {
-    if (keys.includes(key)) {
-      picked[key] = obj[key];
-    }
-  }
-
-  return picked;
-};
+const pick = <T extends Record<string, any>>(
+  body: T,
+  keys: string[]
+): Partial<T> => Object.entries(body).reduce(
+    (acc, [key, value]) => (keys.includes(key) ? { ...acc, [key]: value } : acc),
+    {}
+  );
 
 export default pick;

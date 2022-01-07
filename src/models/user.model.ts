@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
-import { User } from '../interfaces/user';
+import { User } from '../interfaces/user.interface';
 
 interface AuthJson extends Pick<User, 'title' | 'fullName' | 'isAdmin' | 'gender' > {
     token: boolean
@@ -59,6 +59,16 @@ const UserSchema: Schema<IUserDocument> = new Schema(
         }
       }
     },
+    dob: {
+      type: String
+    },
+    phone: {
+      type: String
+    },
+    dp: {
+      url: { type: String },
+      id: { type: String }
+    },
     emailVerificationToken: {
       type: String
     },
@@ -106,9 +116,7 @@ UserSchema.methods.checkPassword = async function (password: string) {
 UserSchema.methods.generateJWT = function () {
   return jwt.sign(
     {
-      _id: this._id,
-      fullName: this.fullName,
-      email: this.email
+      _id: this._id
     },
     process.env.JWT_SECRET_KEY,
     {

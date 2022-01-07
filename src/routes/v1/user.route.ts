@@ -1,7 +1,10 @@
 import express from 'express';
 import { userValidation } from '../../validations';
 import validate from '../../middlewares/validate';
-import { createUser, verifyEmail, login } from '../../controllers/user.controller';
+import CheckAuth from '../../middlewares/checkAuth.middleware';
+import {
+  createUser, verifyEmail, login, updateUserProfile
+} from '../../controllers/user.controller';
 
 const router = express.Router();
 
@@ -16,5 +19,9 @@ router
 router
   .route('/login')
   .post(validate(userValidation.login), login);
+
+router
+  .route('/profile')
+  .patch(validate(userValidation.updateUserProfile), CheckAuth, updateUserProfile);
 
 export default router;

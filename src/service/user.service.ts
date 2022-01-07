@@ -1,11 +1,12 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-underscore-dangle */
 import httpStatus from 'http-status';
 import moment from 'moment';
-import { CreateUserPayload } from '../controllers/user.controller';
+import { CreateUserPayload, UpdateUserPayload } from '../controllers/user.controller';
 import UserModel from '../models/user.model';
 import { randomDigit } from '../utils/utils';
 import ApiError from '../utils/ApiError';
-import { User } from '../interfaces/user';
+import { User } from '../interfaces/user.interface';
 
 const createUser = async (userBody: CreateUserPayload): Promise<User> => {
   if (await UserModel.findByEmail(userBody.email)) {
@@ -43,7 +44,22 @@ const verifyEmail = async (data: { email: string; token: string }) => {
   return { message: 'Email verified successfully' };
 };
 
+const updateUserProfile = async (userId: string, userBody: UpdateUserPayload): Promise<User> => {
+  const updateProfile = await UserModel.findOneAndUpdate(
+    { _id: userId },
+    { $set: userBody },
+    { new: true },
+  );
+
+  if (!updateProfile) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Operation failed');
+  } else {
+    return updateProfile;
+  }
+};
+
 export {
   createUser,
-  verifyEmail
+  verifyEmail,
+  updateUserProfile
 };
