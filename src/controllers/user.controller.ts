@@ -1,13 +1,29 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-underscore-dangle */
 import httpStatus from 'http-status';
 import { Request, Response } from 'express';
+import { title } from 'process';
+import { string } from 'joi';
 import { User } from '../interfaces/user.interface';
-import { userService, emailService, authService } from '../service';
+import {
+  userService, emailService, authService, fileUploadService
+} from '../service';
 
 import { catchAsync } from '../utils/catchAsync';
 
 export type CreateUserPayload = Pick<User, 'email' | 'fullName' | 'gender' | 'title' | 'password' | 'isAdmin'>;
-export type UpdateUserPayload = Pick<User, 'fullName' | 'gender' | 'title' | 'dob' | 'phone'>;
+// export type UpdateUserPayload = Pick<User, 'fullName' | 'gender' | 'title' | 'dob' | 'phone' | 'dp'>;
+export type UpdateUserPayload = {
+    fullName?: string;
+    gender?: string;
+    title?: string;
+    dob?: string;
+    phone?: string;
+    dp?: {
+        url: string;
+        id: string;
+    }
+}
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
   const user = await userService.createUser(req.body);
@@ -32,9 +48,26 @@ const updateUserProfile = catchAsync(async (req: Request<{}, {}, UpdateUserPaylo
   res.status(httpStatus.CREATED).send({ message: 'Profile updated successfully', data: resp, status: true });
 });
 
+const updateProfilePic = catchAsync(async (req: Request, res: Response) => {
+  const { _id, dp } = req.user;
+
+  const { path } = req.file;
+
+  if (dp.url) {
+    await fileUploadService.DeleteFile(dp.id);
+  }
+
+  const upload = await fileUploadService.UploadFile(path);
+
+  const resp = await userService.updateUserProfile(_id, { dp: { id: upload.public_id, url: upload.url } });
+
+  res.status(httpStatus.CREATED).send({ message: 'Profile picture updated successfully', data: resp, status: true });
+});
+
 export {
   createUser,
   verifyEmail,
   login,
-  updateUserProfile
+  updateUserProfile,
+  updateProfilePic
 };

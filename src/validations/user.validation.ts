@@ -35,6 +35,10 @@ const updateUserProfile = {
   })
 };
 
+// const updateDp = {
+
+// }
+
 export {
   createUser,
   verifyEmail,

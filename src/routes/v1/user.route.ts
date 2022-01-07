@@ -3,8 +3,9 @@ import { userValidation } from '../../validations';
 import validate from '../../middlewares/validate';
 import CheckAuth from '../../middlewares/checkAuth.middleware';
 import {
-  createUser, verifyEmail, login, updateUserProfile
+  createUser, verifyEmail, login, updateUserProfile, updateProfilePic
 } from '../../controllers/user.controller';
+import Upload from '../../middlewares/fileUpload.middleware';
 
 const router = express.Router();
 
@@ -23,5 +24,9 @@ router
 router
   .route('/profile')
   .patch(validate(userValidation.updateUserProfile), CheckAuth, updateUserProfile);
+
+router
+  .route('/dp')
+  .patch(Upload.single('image'), CheckAuth, updateProfilePic);
 
 export default router;
