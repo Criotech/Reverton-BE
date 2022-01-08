@@ -41,10 +41,34 @@ const fetchAUser = {
   })
 };
 
+const forgotPassword = {
+  body: Joi.object().keys({
+    email: Joi.string().email().required()
+  })
+};
+
+const resetPassword = {
+  body: Joi.object().keys({
+    token: Joi.string().required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().required().custom(password)
+  })
+};
+
+const updatePassword = {
+  body: Joi.object().keys({
+    oldPassword: Joi.string().required(),
+    newPassword: Joi.string().required()
+  })
+};
+
 export {
   createUser,
   verifyEmail,
   login,
   updateUserProfile,
-  fetchAUser
+  fetchAUser,
+  forgotPassword,
+  resetPassword,
+  updatePassword
 };

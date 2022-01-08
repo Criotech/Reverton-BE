@@ -31,6 +31,26 @@ const sendVerifyAccountEmail = async (to: string, token: string) => {
   await sendEmail(to, subject, text);
 };
 
+const sendResetPasswordEmail = async (to: string, token: string) => {
+  const subject = 'Reset Password';
+
+  const text = `
+      Dear user,
+      
+      Your reset password token is ${token}.
+      If you did not request any password resets, then ignore this email.
+      
+      Thank you, 
+      Riverton
+      `;
+  await sendEmail(to, subject, text);
+};
+
+// const depositSuccess = async () => {
+
+// }
+
 export {
-  sendVerifyAccountEmail
+  sendVerifyAccountEmail,
+  sendResetPasswordEmail
 };

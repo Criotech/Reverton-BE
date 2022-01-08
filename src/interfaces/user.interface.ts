@@ -1,4 +1,4 @@
-export interface User {
+export interface IUser {
     fullName: string;
     email: string;
     gender?: string;
@@ -9,6 +9,7 @@ export interface User {
         url: string;
         id: string;
     };
+    walletId?: string;
     password: string;
     emailVerificationExpires?: Date | string;
     emailVerificationToken?: string;

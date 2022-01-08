@@ -6,13 +6,13 @@ import jwt from 'jsonwebtoken';
 
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
-import { User } from '../interfaces/user.interface';
+import { IUser } from '../interfaces/user.interface';
 
-interface AuthJson extends Pick<User, 'title' | 'fullName' | 'isAdmin' | 'gender' > {
+interface AuthJson extends Pick<IUser, 'title' | 'fullName' | 'isAdmin' | 'gender' > {
     token: boolean
 }
 
-export interface IUserDocument extends User, Document {
+export interface IUserDocument extends IUser, Document {
     checkPassword: (password: string) => Promise<boolean>;
     generateJWT: () => string;
     toAuthJSON: () => AuthJson
@@ -65,6 +65,11 @@ const UserSchema: Schema<IUserDocument> = new Schema(
     },
     phone: {
       type: String
+    },
+    walletId: {
+      type: mongoose.Types.ObjectId,
+      ref: 'Wallet',
+      unique: true
     },
     dp: {
       url: { type: String },
@@ -153,8 +158,7 @@ UserSchema.pre('save', async function (next) {
 });
 
 UserSchema.set('toJSON', {
-  transform(doc, ret: User, opt) {
-    delete ret['password'];
+  transform(doc, ret: IUser, opt) {
     delete ret['emailVerificationToken'];
     delete ret['emailVerificationExpires'];
     return ret;

@@ -1,5 +1,7 @@
 import express from 'express';
 import userRoute from './user.route';
+import walletRoute from './wallet.route';
+import transactionRoute from './transaction.route';
 
 const router = express.Router();
 
@@ -12,6 +14,14 @@ const defaultRoutes: RouteStructure[] = [
   {
     path: '/users',
     route: userRoute
+  },
+  {
+    path: '/wallet',
+    route: walletRoute
+  },
+  {
+    path: '/transactions',
+    route: transactionRoute
   }
 ];
 

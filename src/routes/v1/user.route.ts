@@ -3,7 +3,7 @@ import { userValidation } from '../../validations';
 import validate from '../../middlewares/validate';
 import CheckAuth from '../../middlewares/checkAuth.middleware';
 import {
-  createUser, verifyEmail, login, updateUserProfile, updateProfilePic, fetchAUser, getAuthUser
+  createUser, verifyEmail, login, updateUserProfile, updateProfilePic, fetchAUser, getAuthUser, forgotPassword, resetPassword, updatePassword
 } from '../../controllers/user.controller';
 import Upload from '../../middlewares/fileUpload.middleware';
 
@@ -36,5 +36,17 @@ router
 router
   .route('/dp')
   .patch(Upload.single('image'), CheckAuth, updateProfilePic);
+
+router
+  .route('/forgotpassword')
+  .post(validate(userValidation.forgotPassword), forgotPassword);
+
+router
+  .route('/resetpassword')
+  .post(validate(userValidation.resetPassword), resetPassword);
+
+router
+  .route('/password')
+  .patch(validate(userValidation.updatePassword), CheckAuth, updatePassword);
 
 export default router;

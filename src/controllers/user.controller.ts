@@ -2,14 +2,14 @@
 /* eslint-disable no-underscore-dangle */
 import httpStatus from 'http-status';
 import { Request, Response } from 'express';
-import { User } from '../interfaces/user.interface';
+import { IUser } from '../interfaces/user.interface';
 import {
-  userService, emailService, authService, fileUploadService
+  userService, emailService, authService, fileUploadService, walletService
 } from '../service';
 
 import { catchAsync } from '../utils/catchAsync';
 
-export type CreateUserPayload = Pick<User, 'email' | 'fullName' | 'gender' | 'title' | 'password' | 'isAdmin'>;
+export type CreateUserPayload = Pick<IUser, 'email' | 'fullName' | 'gender' | 'title' | 'password' | 'isAdmin'>;
 export type UpdateUserPayload = {
     fullName?: string;
     gender?: string;
@@ -24,6 +24,9 @@ export type UpdateUserPayload = {
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
   const user = await userService.createUser(req.body);
+  const wallet = await walletService.createWallet(user._id);
+  user.walletId = wallet._id;
+  await user.save();
   await emailService.sendVerifyAccountEmail(user.email, user.emailVerificationToken);
 
   res.status(httpStatus.CREATED).send({ message: `A mail have being sent to ${user.email}, Kindly verify you account.`, status: true });
@@ -86,6 +89,29 @@ const fetchAUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const forgotPassword = catchAsync(async (req: Request, res: Response) => {
+  const { email } = req.body;
+  const token = await userService.forgotPassword(email);
+  await emailService.sendResetPasswordEmail(email, token);
+
+  res.status(httpStatus.CREATED).send({ message: 'Reset password token has been sent to your mail', status: true });
+});
+
+const resetPassword = catchAsync(async (req: Request, res: Response) => {
+  const resp = await userService.resetPassword(req.body.token, req.body.email, req.body.password);
+
+  res.status(httpStatus.CREATED).send({ message: resp, status: true });
+});
+
+const updatePassword = catchAsync(async (req: Request, res: Response) => {
+  const { _id, password } = req.user;
+  const { oldPassword, newPassword } = req.body;
+
+  await userService.updatePassword(_id, password, oldPassword, newPassword);
+
+  res.status(httpStatus.CREATED).send({ message: 'Updated successfully.', status: true });
+});
+
 export {
   createUser,
   verifyEmail,
@@ -93,5 +119,8 @@ export {
   updateUserProfile,
   updateProfilePic,
   getAuthUser,
-  fetchAUser
+  fetchAUser,
+  forgotPassword,
+  resetPassword,
+  updatePassword
 };
