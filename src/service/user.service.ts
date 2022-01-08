@@ -58,8 +58,19 @@ const updateUserProfile = async (userId: string, userBody: UpdateUserPayload): P
   }
 };
 
+const fetchUser = async (userId: string): Promise<User> => {
+  const user = UserModel.findById(userId).select('_id dp fullName email isAdmin gender phone');
+
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  } else {
+    return user;
+  }
+};
+
 export {
   createUser,
   verifyEmail,
-  updateUserProfile
+  updateUserProfile,
+  fetchUser
 };

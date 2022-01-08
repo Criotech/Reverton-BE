@@ -3,7 +3,7 @@ import { userValidation } from '../../validations';
 import validate from '../../middlewares/validate';
 import CheckAuth from '../../middlewares/checkAuth.middleware';
 import {
-  createUser, verifyEmail, login, updateUserProfile, updateProfilePic
+  createUser, verifyEmail, login, updateUserProfile, updateProfilePic, fetchAUser, getAuthUser
 } from '../../controllers/user.controller';
 import Upload from '../../middlewares/fileUpload.middleware';
 
@@ -12,6 +12,14 @@ const router = express.Router();
 router
   .route('/')
   .post(validate(userValidation.createUser), createUser);
+
+router
+  .route('/user/:userId')
+  .get(validate(userValidation.fetchAUser), CheckAuth, fetchAUser);
+
+router
+  .route('/auth')
+  .get(CheckAuth, getAuthUser);
 
 router
   .route('/security/verify_emai')

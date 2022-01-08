@@ -35,13 +35,16 @@ const updateUserProfile = {
   })
 };
 
-// const updateDp = {
-
-// }
+const fetchAUser = {
+  params: Joi.object().keys({
+    userId: Joi.string().required()
+  })
+};
 
 export {
   createUser,
   verifyEmail,
   login,
-  updateUserProfile
+  updateUserProfile,
+  fetchAUser
 };

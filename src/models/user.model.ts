@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable func-names */
 import mongoose, { Schema, Document, Model } from 'mongoose';
 import jwt from 'jsonwebtoken';
@@ -149,6 +150,15 @@ UserSchema.pre('save', async function (next) {
     user.password = await bcrypt.hash(user.password, 8);
   }
   next();
+});
+
+UserSchema.set('toJSON', {
+  transform(doc, ret: User, opt) {
+    delete ret['password'];
+    delete ret['emailVerificationToken'];
+    delete ret['emailVerificationExpires'];
+    return ret;
+  }
 });
 
 const UserModel = mongoose.model<IUserDocument, IUserModel>('User', UserSchema);

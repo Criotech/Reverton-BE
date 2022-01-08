@@ -2,8 +2,6 @@
 /* eslint-disable no-underscore-dangle */
 import httpStatus from 'http-status';
 import { Request, Response } from 'express';
-import { title } from 'process';
-import { string } from 'joi';
 import { User } from '../interfaces/user.interface';
 import {
   userService, emailService, authService, fileUploadService
@@ -12,7 +10,6 @@ import {
 import { catchAsync } from '../utils/catchAsync';
 
 export type CreateUserPayload = Pick<User, 'email' | 'fullName' | 'gender' | 'title' | 'password' | 'isAdmin'>;
-// export type UpdateUserPayload = Pick<User, 'fullName' | 'gender' | 'title' | 'dob' | 'phone' | 'dp'>;
 export type UpdateUserPayload = {
     fullName?: string;
     gender?: string;
@@ -64,10 +61,37 @@ const updateProfilePic = catchAsync(async (req: Request, res: Response) => {
   res.status(httpStatus.CREATED).send({ message: 'Profile picture updated successfully', data: resp, status: true });
 });
 
+const getAuthUser = catchAsync(async (req: Request, res: Response) => {
+  const {
+    _id, dp, fullName, email, isAdmin, gender, phone
+  } = req.user;
+
+  res.status(httpStatus.CREATED).send({
+    message: 'fetched successfully',
+    data: {
+      _id, dp, fullName, email, isAdmin, gender, phone
+    },
+    status: true
+  });
+});
+
+const fetchAUser = catchAsync(async (req: Request, res: Response) => {
+  const { userId } = req.params;
+
+  const user = await userService.fetchUser(userId);
+  res.status(httpStatus.CREATED).send({
+    message: 'fetched successfully',
+    data: user,
+    status: true
+  });
+});
+
 export {
   createUser,
   verifyEmail,
   login,
   updateUserProfile,
-  updateProfilePic
+  updateProfilePic,
+  getAuthUser,
+  fetchAUser
 };
