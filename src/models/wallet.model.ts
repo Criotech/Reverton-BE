@@ -26,6 +26,9 @@ const WalletSchema: Schema<IWalletDocument> = new Schema(
       type: String,
       required: true,
       unique: true
+    },
+    reference: {
+      type: String
     }
   },
   {

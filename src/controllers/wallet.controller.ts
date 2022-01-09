@@ -2,6 +2,7 @@
 /* eslint-disable no-underscore-dangle */
 import httpStatus from 'http-status';
 import { Request, Response } from 'express';
+import ApiError from '../utils/ApiError';
 import {
   userService, emailService, paystackService, walletService, transactionService
 } from '../service';
@@ -29,6 +30,11 @@ const verifyDeposit = catchAsync(async (req: Request, res: Response) => {
 
   if (verifyPayment.status === 'success') {
     const wallet = await walletService.fetchByWalletById(walletId);
+    if (wallet.reference === req.params.referenceId) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'ReferenceId expired');
+    }
+    wallet.reference = req.params.reference;
+    await wallet.save();
     const updateWalletBalance = await walletService.updateWalletBalance(wallet.walletAddress, verifyPayment.amount / 100);
 
     await transactionService.addTransaction({
